@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRKR Library Dashboard</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            color: #252525;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 32px;
+            background: #ffffff;
+            border-bottom: 4px solid #f47b20;
+        }
+
+        header img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #b94e0b;
+            font-size: 24px;
+        }
+
+        .account {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+
+        .account a {
+            color: #b94e0b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .account a:hover { text-decoration: underline; }
+
+        .logout-button {
+            padding: 8px 12px;
+            border: 0;
+            border-radius: 4px;
+            color: #ffffff;
+            background: #b94e0b;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-button:hover { background: #8f3d08; }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 16px 32px;
+            background: #f47b20;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover { text-decoration: underline; }
+
+        main { padding: 32px; }
+
+        .welcome, .loans {
+            max-width: 1100px;
+            margin-bottom: 24px;
+            padding: 28px;
+            background: #ffffff;
+            border-left: 5px solid #f47b20;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+
+        .welcome h2, .loans h2 {
+            margin-top: 0;
+            color: #b94e0b;
+        }
+
+        .library-image {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        .library-image img {
+            display: block;
+            width: 100%;
+            max-width: 1000px;
+            max-height: 500px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #dddddd;
+            text-align: left;
+        }
+
+        th {
+            background: #fff1e6;
+            color: #8f3d08;
+        }
+
+        input[type="date"] {
+            padding: 7px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            background: #b94e0b;
+            cursor: pointer;
+        }
+
+        button:hover { background: #8f3d08; }
+
+        .decline-button { background: #666666; }
+
+        .action-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 140px;
+        }
+
+        .student-registration {
+            display: block;
+            margin-top: 5px;
+            color: #666666;
+            font-size: 13px;
+        }
+
+        .empty { color: #666666; }
+
+        @media (max-width: 700px) {
+            header {
+                align-items: flex-start;
+                flex-wrap: wrap;
+                padding: 16px;
+            }
+
+            header h1 { font-size: 20px; }
+
+            .account {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            nav { padding: 16px; }
+            main { padding: 16px; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <img src="/images/srkr-logo.png" alt="SRKR Engineering College logo">
+    <h1>SRKR Library Management System</h1>
+
+    <div class="account">
+        <span th:if="${role == 'STUDENT'}">
+            Registration No:
+            <strong th:text="${registrationNumber}">Registration Number</strong>
+        </span>
+
+        <span th:if="${role == 'ADMIN'}">Admin</span>
+
+        <form th:if="${role != null}" th:action="@{/logout}" method="post">
+            <button class="logout-button" type="submit">Logout</button>
+        </form>
+
+        <a th:if="${role == null}" href="/login">Login</a>
+    </div>
+</header>
+
+<nav>
+    <a href="/">Dashboard</a>
+    <a href="/books">Books</a>
+    <a th:if="${role == null}" href="/signup">Student Signup</a>
+</nav>
+
+<main>
+    <section class="welcome">
+        <h2>Welcome to the Library Dashboard</h2>
+        <p>Browse the available books or sign in to continue.</p>
+
+        <div class="library-image">
+            <img src="/images/library.jpg" alt="SRKR college library">
+        </div>
+    </section>
+
+    <!-- Admin: pending requests -->
+    <section class="loans" th:if="${role == 'ADMIN'}">
+        <h2>Pending Book Requests</h2>
+
+        <div class="table-wrap" th:if="${!#lists.isEmpty(pendingRequests)}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="loan : ${pendingRequests}">
+                    <td>
+                        <span th:text="${loan.student.fullName}"></span>
+                        <small class="student-registration">
+                            Reg. No:
+                            <strong th:text="${loan.student.registrationNumber}"></strong>
+                        </small>
+                    </td>
+
+                    <td th:text="${loan.book.title}"></td>
+                    <td th:text="${loan.book.author}"></td>
+
+                    <td colspan="3">
+                        <form class="action-form"
+                              th:action="@{/admin/requests/{id}/approve(id=${loan.id})}"
+                              method="post">
+                            <label>Issue date</label>
+                            <input type="date" name="issueDate" required>
+
+                            <label>Due date</label>
+                            <input type="date" name="dueDate" required>
+
+                            <button type="submit">Approve</button>
+                        </form>
+
+                        <form class="action-form"
+                              th:action="@{/admin/requests/{id}/decline(id=${loan.id})}"
+                              method="post">
+                            <button class="decline-button" type="submit">Decline</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="empty" th:if="${#lists.isEmpty(pendingRequests)}">
+            There are no pending book requests.
+        </p>
+    </section>
+
+    <!-- Student: approved books -->
+    <section class="loans" th:if="${role == 'STUDENT'}">
+        <h2>My Approved Books</h2>
+
+        <div class="table-wrap" th:if="${!#lists.isEmpty(approvedLoans)}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="loan : ${approvedLoans}">
+                    <td th:text="${loan.book.title}"></td>
+                    <td th:text="${loan.book.author}"></td>
+                    <td th:text="${loan.issueDate}"></td>
+                    <td th:text="${loan.dueDate}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="empty" th:if="${#lists.isEmpty(approvedLoans)}">
+            You have no approved book requests yet.
+        </p>
+    </section>
+</main>
+</body>
+</html>

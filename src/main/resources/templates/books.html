@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books | SRKR Library Management System</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            color: #252525;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 16px 32px;
+            background: #ffffff;
+            border-bottom: 4px solid #f47b20;
+        }
+
+        header img {
+            width: 76px;
+            height: 76px;
+            object-fit: contain;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #b94e0b;
+            font-size: 26px;
+        }
+
+        .account {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+
+        .logout-button {
+            padding: 8px 12px;
+            border: 0;
+            border-radius: 4px;
+            background: #b94e0b;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logout-button:hover { background: #8f3d08; }
+
+        .account a {
+            color: #b94e0b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+            padding: 16px 32px;
+            background: #f47b20;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover { text-decoration: underline; }
+
+        main { padding: 32px; }
+
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .page-heading h2 {
+            margin: 0;
+            color: #b94e0b;
+        }
+
+        .add-button,
+        .request-button {
+            display: inline-block;
+            padding: 11px 16px;
+            border: 0;
+            border-radius: 4px;
+            background: #f47b20;
+            color: #ffffff;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .request-button:disabled {
+            background: #999999;
+            cursor: not-allowed;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e5e5;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #fff0e5;
+            color: #8f3b08;
+        }
+
+        tbody tr:hover { background: #fffaf6; }
+
+        .action-link {
+            color: #b94e0b;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .empty-message {
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 700px) {
+            header {
+                flex-wrap: wrap;
+                padding: 16px;
+            }
+
+            header h1 { font-size: 20px; }
+
+            .account {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            nav {
+                padding: 16px;
+                flex-wrap: wrap;
+            }
+
+            main { padding: 16px; }
+        }
+
+        @media (max-width: 600px) {
+            .page-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <img src="/images/srkr-logo.png" alt="SRKR Engineering College logo">
+    <h1>SRKR Library Management System</h1>
+
+    <div class="account">
+        <span th:if="${role == 'STUDENT'}">
+            Registration No:
+            <strong th:text="${registrationNumber}">Registration Number</strong>
+        </span>
+
+        <span th:if="${role == 'ADMIN'}">Admin</span>
+
+        <form th:if="${role != null}" th:action="@{/logout}" method="post">
+            <button class="logout-button" type="submit">Logout</button>
+        </form>
+
+        <a th:if="${role == null}" href="/login">Login</a>
+    </div>
+</header>
+
+<nav>
+    <a href="/">Dashboard</a>
+    <a href="/books">Books</a>
+</nav>
+
+<main>
+    <div class="page-heading">
+        <h2>Books</h2>
+
+        <a class="add-button"
+           href="/books/new"
+           th:if="${role == 'ADMIN'}">
+            + Add Book
+        </a>
+    </div>
+
+    <p class="empty-message" th:if="${#lists.isEmpty(books)}">
+        No books have been added yet.
+    </p>
+
+    <div class="table-container" th:unless="${#lists.isEmpty(books)}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Total Copies</th>
+                <th>Available Copies</th>
+                <th th:if="${role == 'ADMIN'}">Actions</th>
+                <th th:if="${role == 'STUDENT'}">Request</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.id}"></td>
+                <td th:text="${book.title}"></td>
+                <td th:text="${book.author}"></td>
+                <td th:text="${book.category}"></td>
+                <td th:text="${book.totalCopies}"></td>
+                <td th:text="${book.availableCopies}"></td>
+
+                <td th:if="${role == 'ADMIN'}">
+                    <a class="action-link"
+                       th:href="@{/books/edit/{id}(id=${book.id})}">
+                        Edit
+                    </a>
+                </td>
+
+                <td th:if="${role == 'STUDENT'}">
+                    <form th:action="@{/requests/{id}(id=${book.id})}"
+                          method="post">
+                        <button class="request-button"
+                                type="submit"
+                                th:disabled="${book.availableCopies <= 0}">
+                            Request Book
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

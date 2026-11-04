@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SRKR Library</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            color: #252525;
+        }
+
+        h1 {
+            color: #b94e0b;
+            text-align: center;
+        }
+
+        form {
+            max-width: 420px;
+            margin: 24px auto;
+            padding: 28px;
+            background: #ffffff;
+            border-top: 5px solid #f47b20;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font: inherit;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border: 0;
+            border-radius: 4px;
+            background: #f47b20;
+            color: #ffffff;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #d96512;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        a {
+            color: #b94e0b;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Login</h1>
+
+<form action="/login" method="post">
+    <label for="registrationNumber">Registration Number</label>
+    <input
+            type="text"
+            id="registrationNumber"
+            name="registrationNumber"
+            required
+    >
+
+    <label for="password">Password</label>
+    <input
+            type="password"
+            id="password"
+            name="password"
+            required
+    >
+
+    <button type="submit">Login</button>
+</form>
+
+<p>New student? <a href="/signup">Create an account</a></p>
+</body>
+</html>
