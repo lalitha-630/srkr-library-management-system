@@ -66,6 +66,14 @@ public class AuthController {
             @RequestParam String password,
             HttpSession session) {
 
+        // Prototype-only admin login; does not require a database account.
+        if ("adminH9".equals(registrationNumber)
+                && "1234".equals(password)) {
+            session.setAttribute("registrationNumber", "adminH9");
+            session.setAttribute("role", "ADMIN");
+            return "redirect:/";
+        }
+
         return userAccountService.findByRegistrationNumber(registrationNumber)
                 .filter(account -> account.getPassword().equals(password))
                 .map(account -> {
