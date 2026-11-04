@@ -228,7 +228,6 @@
                 <th>Author</th>
                 <th>Category</th>
                 <th>Total Copies</th>
-                <th>Available Copies</th>
                 <th th:if="${role == 'ADMIN'}">Actions</th>
                 <th th:if="${role == 'STUDENT'}">Request</th>
             </tr>
@@ -241,7 +240,6 @@
                 <td th:text="${book.author}"></td>
                 <td th:text="${book.category}"></td>
                 <td th:text="${book.totalCopies}"></td>
-                <td th:text="${book.availableCopies}"></td>
 
                 <td th:if="${role == 'ADMIN'}">
                     <a class="action-link"
